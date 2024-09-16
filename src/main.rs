@@ -125,7 +125,7 @@ async fn main() {
             lives -= 1;
         }
 
-        if lives == 0 {
+        if lives == 0 || is_key_down(KeyCode::Q) {
             break;
         }
         draw_text(&format!("HP: {}", lives.to_string()).to_string(), 10.0, 20.0, 30.0, WHITE);
