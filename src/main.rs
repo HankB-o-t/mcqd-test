@@ -1,96 +1,23 @@
 use macroquad::prelude::*;
 use macroquad::texture;
+mod enemy;
+mod player;
 
 const PLAYER_SIZE: Vec2 = const_vec2!([20.0, 20.0]);
 const PLAYER_SPEED: f32 = 300.0;
-
-
-struct Player {
-    rect: Rect,
-}
-
-struct Enemy { 
-    rect: Rect,
-}
-
-/*struct Bullet {
-    circle: Circle,
-} */
-
-impl Enemy {
-    pub fn new() -> Self {
-        Self {
-            rect: Rect::new( 
-                screen_width() / 2.5,
-                screen_height() / 2.5,
-                PLAYER_SIZE.x * 2.0,
-                PLAYER_SIZE.y * 2.0,
-            ),
-        }
-    }
-
-    pub fn update(&mut self, shit: f32, shit_x: f32, shit_y: f32) {
-        if self.rect.x >= screen_width() {
-            self.rect.x = 0.0;
-        } self.rect.x += shit_x;
-
-        if self.rect.y >= screen_height() {
-            self.rect.y = 0.0;
-        } self.rect.y += shit_y;
-    }
-
-    pub fn draw(&self, width: f32, height: f32,color: Color) {
-        draw_rectangle(self.rect.x, self.rect.y, width, height, color);
-    }
-}
-
-impl Player {
-    pub fn new() -> Self {
-        Self {
-            rect: Rect::new(
-                screen_width() / 2.0,
-                screen_height() / 2.0,
-                PLAYER_SIZE.x,
-                PLAYER_SIZE.y,
-            ),
-        }
-    }
-
-    pub fn draw(&self) {
-        draw_rectangle(self.rect.x, self.rect.y, self.rect.w, self.rect.h, GREEN);
-    }
-    
-    pub fn update(&mut self, dt: f32) {
-
-
-        // movimiento
-        let mut x_move: f32 = 0.0;
-        let mut y_move: f32 = 0.0;
-
-        if is_key_down(KeyCode::D) { x_move += 1.0 }
-        if is_key_down(KeyCode::A) { x_move -= 1.0 }
-        if is_key_down(KeyCode::W) { y_move -= 1.0 }
-        if is_key_down(KeyCode::S) { y_move += 1.0 }
-
-        self.rect.x += x_move * dt * PLAYER_SPEED;
-        self.rect.y += y_move * dt * PLAYER_SPEED;
-    }
-}
 
 #[macroquad::main("Survive game")]
 async fn main() {
     let mut cloc: f64  = 0.0;
     let mut dcloc: i32 = 0;
-
-    let mut player = Player::new();
-
-    let mut enemy1 = Enemy::new();
-    let mut enemy2 = Enemy::new();
-    let mut enemy3 = Enemy::new();
+    let mut player = player::Player::new();
     
-    let mut enemy4 = Enemy::new();
+    let mut enemy1 = enemy::Enemy::new();
+    let mut enemy2 = enemy::Enemy::new();
+    let mut enemy3 = enemy::Enemy::new();
+    let mut enemy4 = enemy::Enemy::new();
     
-    let mut lives = 100;   
+    let mut lives = 100;
 
     let texture: Texture2D = load_texture("images/nave.png").await.unwrap();
 
@@ -98,9 +25,9 @@ async fn main() {
         player.update(get_frame_time());
 
         //IMPORTANTE:                    X    Y
-        enemy1.update(get_frame_time(), 6.0, 12.0);
-        enemy2.update(get_frame_time(), 12.0, 6.0);
-        enemy3.update(get_frame_time(), cloc as f32 / 10.0, cloc as f32 / 10.0);
+        enemy1.update(get_frame_time(), 5.1, 12.8);
+        enemy2.update(get_frame_time(), 11.7, 6.2);
+        enemy3.update(get_frame_time(), cloc as f32 / 3.14, cloc as f32 / 3.14);
         enemy4.update(get_frame_time(), 6.0, 6.0);
         
         clear_background(BLACK);
@@ -131,7 +58,10 @@ async fn main() {
         draw_text(&format!("HP: {}", lives.to_string()).to_string(), 10.0, 20.0, 30.0, WHITE);
        
         // debug
+        let mut fps = get_frame_time() * 1000.0;
+
         draw_text(&format!("Time: {}", dcloc.to_string()).to_string(), 10.0, screen_height() - 20.0, 30.0, WHITE);
+        draw_text(&format!("FPS: {}", fps.to_string()).to_string(), 120.0, screen_height() - 20.0, 30.0, WHITE);
        
         cloc = get_time();
         dcloc = cloc as i32;
